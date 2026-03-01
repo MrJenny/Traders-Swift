@@ -1,0 +1,5 @@
+{
+  "name": "Traders-Swift",
+  "description": "Investment recommendations based on the MTJ factor: high growth with low volatility for US stocks and ETFs.",
+  "requestFramePermissions": []
+}
