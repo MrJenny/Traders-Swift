@@ -23,26 +23,36 @@ createIcons({
 });
 
 // Render Recommendations Table
-const renderRecommendations = () => {
+const renderRecommendations = async () => {
   const listContainer = document.getElementById('recommendations-list');
   if (!listContainer) return;
 
-  MOCK_RECOMMENDATIONS.forEach((stock) => {
-    const row = document.createElement('div');
-    row.className = 'data-grid-row mx-4 my-2';
-    row.innerHTML = `
-      <div class="flex flex-col">
-        <span class="font-bold font-mono">${stock.symbol}</span>
-        <span class="text-[10px] text-black/40 truncate">${stock.name}</span>
-      </div>
-      <span class="text-right font-mono text-sm">${stock.volume.toLocaleString()}</span>
-      <span class="text-right font-mono text-sm">${stock.stdDev}</span>
-      <span class="text-right font-mono text-sm">${stock.ramp}</span>
-      <span class="text-right font-mono text-sm font-bold text-emerald-600">${stock.mtj}</span>
-      <span class="text-right font-mono text-sm">${stock.tra}</span>
-    `;
-    listContainer.appendChild(row);
-  });
+  try {
+    const response = await fetch('/api/recommendations');
+    const recommendations = await response.json();
+    
+    listContainer.innerHTML = ''; // Clear container
+
+    recommendations.forEach((stock: any) => {
+      const row = document.createElement('div');
+      row.className = 'data-grid-row mx-4 my-2';
+      row.innerHTML = `
+        <div class="flex flex-col">
+          <span class="font-bold font-mono">${stock.symbol}</span>
+          <span class="text-[10px] text-black/40 truncate">${stock.name}</span>
+        </div>
+        <span class="text-right font-mono text-sm">${stock.volume.toLocaleString()}</span>
+        <span class="text-right font-mono text-sm">${stock.stdDev}</span>
+        <span class="text-right font-mono text-sm">${stock.ramp}</span>
+        <span class="text-right font-mono text-sm font-bold text-emerald-600">${stock.mtj}</span>
+        <span class="text-right font-mono text-sm">${stock.tra}</span>
+      `;
+      listContainer.appendChild(row);
+    });
+  } catch (error) {
+    console.error('Failed to fetch recommendations:', error);
+    listContainer.innerHTML = '<p class="p-8 text-center text-red-500">Fehler beim Laden der Daten.</p>';
+  }
 };
 
 // Render Performance Chart using D3
