@@ -8,17 +8,70 @@
 $promo_code = 'KBG6KJ';
 $referral_email = 'm_jenny@bluewin.ch';
 
-$recommendations = [
-    ['symbol' => 'VNET', 'volume' => 1057945, 'stdDev' => 8.4, 'ramp' => 101.5, 'mtj' => 3970, 'tra' => 1.77, 'name' => 'VNET Group, Inc.'],
-    ['symbol' => 'ZH', 'volume' => 8177501, 'stdDev' => 9.5, 'ramp' => 62.2, 'mtj' => 1866, 'tra' => 3.14, 'name' => 'Zhihu Inc.'],
-    ['symbol' => 'BABA', 'volume' => 42067674, 'stdDev' => 3.9, 'ramp' => 49.3, 'mtj' => 1214, 'tra' => 1.99, 'name' => 'Alibaba Group Holding Ltd'],
-    ['symbol' => 'SRC', 'volume' => 1186076, 'stdDev' => 8.4, 'ramp' => 54.6, 'mtj' => 970, 'tra' => 1.65, 'name' => 'Spirit Realty Capital'],
-    ['symbol' => 'TUYA', 'volume' => 1188033, 'stdDev' => 8.4, 'ramp' => 54.6, 'mtj' => 970, 'tra' => 1.65, 'name' => 'Tuya Inc.'],
-    ['symbol' => 'ACMR', 'volume' => 1596081, 'stdDev' => 5.5, 'ramp' => 40.1, 'mtj' => 917, 'tra' => 2.27, 'name' => 'ACM Research, Inc.'],
-    ['symbol' => 'SEDG', 'volume' => 888309, 'stdDev' => 8.5, 'ramp' => 33.9, 'mtj' => 717, 'tra' => 2.49, 'name' => 'SolarEdge Technologies'],
-    ['symbol' => 'SIFY', 'volume' => 135375, 'stdDev' => 7.9, 'ramp' => 54.7, 'mtj' => 696, 'tra' => 1.43, 'name' => 'Sify Technologies Ltd'],
-    ['symbol' => 'LUNG', 'volume' => 635710, 'stdDev' => 9.9, 'ramp' => 45.9, 'mtj' => 678, 'tra' => 4.43, 'name' => 'Pulmonx Corporation'],
-];
+// Load recommendations from JSON file
+$json_file = '373-AR-KW09_6W_Equity.json';
+$recommendations = [];
+
+if (file_exists($json_file)) {
+    $json_content = file_get_contents($json_file);
+    $data = json_decode($json_content, true);
+    
+    // Symbol to Name mapping for better UX
+    $name_mapping = [
+        'RIG' => 'Transocean Ltd.',
+        'GERN' => 'Geron Corporation',
+        'KOS' => 'Kosmos Energy Ltd.',
+        'GLW' => 'Corning Incorporated',
+        'VRT' => 'Vertiv Holdings Co',
+        'XPO' => 'XPO, Inc.',
+        'NE' => 'Noble Corporation plc',
+        'ABB' => 'ABB Ltd',
+        'BKD' => 'Brookdale Senior Living Inc.',
+        'VIAV' => 'Viavi Solutions Inc.',
+        'CHX' => 'ChampionX Corporation',
+        'ALXO' => 'ALX Oncology Holdings Inc.',
+        'SOND' => 'Sonder Holdings Inc.',
+        'PRTS' => 'CarParts.com, Inc.',
+        'STKL' => 'SunOpta Inc.',
+        'DVA' => 'DaVita Inc.',
+        'UCTT' => 'Ultra Clean Holdings, Inc.',
+        'TPH' => 'Tri Pointe Homes, Inc.',
+        'OIS' => 'Oil States International, Inc.',
+        'NS' => 'NuStar Energy L.P.',
+        'MOD' => 'Modine Manufacturing Company',
+        'LITE' => 'Lumentum Holdings Inc.',
+        'HCP' => 'HashiCorp, Inc.',
+        'RRX' => 'Regal Rexnord Corporation',
+        'ERAS' => 'Erasca, Inc.',
+        'CGNX' => 'Cognex Corporation',
+        'VAL' => 'Valaris Limited',
+        'TER' => 'Teradyne, Inc.',
+        'CIEN' => 'Ciena Corporation',
+        'PLX' => 'Protalix BioTherapeutics, Inc.',
+        'GNRC' => 'Generac Holdings Inc.'
+    ];
+
+    if (isset($data['SYMBOLS'])) {
+        foreach ($data['SYMBOLS'] as $s) {
+            $recommendations[] = [
+                'symbol' => $s['SYM'],
+                'volume' => (int)$s['VOL'],
+                'stdDev' => (float)$s['STD_DIV'],
+                'ramp' => (float)$s['RAMP_GT_per_month'],
+                'mtj' => (float)$s['MTJRating'],
+                'tra' => (float)$s['TransActionRamp'],
+                'name' => isset($name_mapping[$s['SYM']]) ? $name_mapping[$s['SYM']] : $s['SYM']
+            ];
+        }
+    }
+} else {
+    // Fallback mock data if file is missing
+    $recommendations = [
+        ['symbol' => 'VNET', 'volume' => 1057945, 'stdDev' => 8.4, 'ramp' => 101.5, 'mtj' => 3970, 'tra' => 1.77, 'name' => 'VNET Group, Inc.'],
+        ['symbol' => 'ZH', 'volume' => 8177501, 'stdDev' => 9.5, 'ramp' => 62.2, 'mtj' => 1866, 'tra' => 3.14, 'name' => 'Zhihu Inc.'],
+        ['symbol' => 'BABA', 'volume' => 42067674, 'stdDev' => 3.9, 'ramp' => 49.3, 'mtj' => 1214, 'tra' => 1.99, 'name' => 'Alibaba Group Holding Ltd'],
+    ];
+}
 ?>
 <!doctype html>
 <html lang="de">
@@ -80,7 +133,7 @@ $recommendations = [
             </nav>
             <div class="flex items-center gap-4">
                 <span class="hidden sm:inline-block text-xs font-mono bg-emerald-100 text-emerald-700 px-2 py-1 rounded">PILOT PHASE</span>
-                <button class="bg-black text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-black/80 transition-colors">
+                <button onclick="openPremiumModal()" class="bg-black text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-black/80 transition-colors">
                     Premium Zugang
                 </button>
             </div>
@@ -271,7 +324,7 @@ $recommendations = [
                         </div>
                         <div id="recommendations-list" class="border-x border-b border-black/5 rounded-b-2xl overflow-hidden">
                             <?php foreach ($recommendations as $stock): ?>
-                                <div class="data-grid-row mx-4 my-2">
+                                <div class="data-grid-row px-8">
                                     <div class="flex flex-col">
                                         <span class="font-bold font-mono"><?php echo $stock['symbol']; ?></span>
                                         <span class="text-[10px] text-black/40 truncate"><?php echo $stock['name']; ?></span>
@@ -315,11 +368,11 @@ $recommendations = [
                                 In Zukunft wird es möglich sein, eine Premium Lizenz zu erwerben. Erhalten Sie 4x im Monat die aktuellsten Scans direkt in Ihr Postfach.
                             </p>
                             <div class="flex items-end gap-2 mb-8">
-                                <span class="text-4xl font-serif font-bold">~80.-</span>
+                                <span class="text-4xl font-serif font-bold">50.-</span>
                                 <span class="text-sm opacity-60 pb-1">CHF / Monat</span>
                             </div>
-                            <button class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-white rounded-full font-bold transition-colors">
-                                Auf Warteliste setzen
+                            <button onclick="openPremiumModal()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-white rounded-full font-bold transition-colors">
+                                Jetzt Premium sichern
                             </button>
                         </div>
                         <i data-lucide="zap" class="absolute -bottom-10 -right-10 w-48 h-48 text-white/5 rotate-12"></i>
@@ -403,6 +456,116 @@ $recommendations = [
             </div>
         </div>
     </footer>
+
+    <!-- Premium Modal -->
+    <div id="premium-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closePremiumModal()"></div>
+        <div class="glass-card w-full max-w-lg bg-white relative z-10 overflow-hidden animate-in fade-in zoom-in duration-300">
+            <button onclick="closePremiumModal()" class="absolute top-6 right-6 text-black/40 hover:text-black transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+
+            <!-- Step 1: Registration -->
+            <div id="step-registration" class="p-8 md:p-12">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold mb-2">Premium Zugang</h2>
+                    <p class="text-black/60">Registrieren Sie sich für wöchentliche Analysen.</p>
+                </div>
+                
+                <form onsubmit="handleRegistration(event)" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-widest opacity-40">Vorname</label>
+                            <input type="text" required name="firstname" class="w-full px-4 py-3 rounded-xl border border-black/10 focus:border-emerald-500 outline-none transition-colors" placeholder="Max">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-widest opacity-40">Name</label>
+                            <input type="text" required name="lastname" class="w-full px-4 py-3 rounded-xl border border-black/10 focus:border-emerald-500 outline-none transition-colors" placeholder="Mustermann">
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase tracking-widest opacity-40">E-Mail Adresse</label>
+                        <input type="email" required name="email" class="w-full px-4 py-3 rounded-xl border border-black/10 focus:border-emerald-500 outline-none transition-colors" placeholder="max@beispiel.ch">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase tracking-widest opacity-40">Passwort</label>
+                        <input type="password" required name="password" class="w-full px-4 py-3 rounded-xl border border-black/10 focus:border-emerald-500 outline-none transition-colors" placeholder="••••••••">
+                    </div>
+                    
+                    <div class="pt-4">
+                        <button type="submit" class="w-full py-4 bg-black text-white rounded-full font-bold hover:bg-black/80 transition-colors flex items-center justify-center gap-2">
+                            Weiter zur Zahlung <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 2: Payment -->
+            <div id="step-payment" class="p-8 md:p-12 hidden">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold mb-2">Zahlung</h2>
+                    <p class="text-black/60">Wählen Sie Ihre bevorzugte Zahlungsmethode.</p>
+                </div>
+
+                <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 mb-8 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-widest text-emerald-700 opacity-60">Abonnement</p>
+                        <p class="font-bold">Premium Lizenz (4-8 Listen/Monat)</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xl font-bold">50.-</p>
+                        <p class="text-[10px] text-emerald-700/60 uppercase font-bold">CHF / Monat</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <button onclick="handlePayment('paypal')" class="w-full p-4 rounded-2xl border border-black/10 hover:border-blue-500 hover:bg-blue-50 transition-all flex items-center justify-between group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="wallet" class="text-blue-600 w-6 h-6"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-bold">PayPal</p>
+                                <p class="text-xs text-black/40">Sicher und schnell bezahlen</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-black/20 group-hover:text-blue-500 transition-colors"></i>
+                    </button>
+
+                    <button onclick="handlePayment('visa')" class="w-full p-4 rounded-2xl border border-black/10 hover:border-emerald-500 hover:bg-emerald-50 transition-all flex items-center justify-between group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="credit-card" class="text-emerald-600 w-6 h-6"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-bold">Visa / Kreditkarte</p>
+                                <p class="text-xs text-black/40">Alle gängigen Karten akzeptiert</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-black/20 group-hover:text-emerald-500 transition-colors"></i>
+                    </button>
+                </div>
+
+                <button onclick="showStep('registration')" class="mt-8 text-sm text-black/40 hover:text-black transition-colors flex items-center gap-2">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Zurück zur Registrierung
+                </button>
+            </div>
+
+            <!-- Step 3: Success -->
+            <div id="step-success" class="p-8 md:p-12 hidden text-center">
+                <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8">
+                    <i data-lucide="check-circle" class="w-10 h-10"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-4">Willkommen bei Premium!</h2>
+                <p class="text-black/60 mb-8 leading-relaxed">
+                    Vielen Dank für Ihr Vertrauen. Sie erhalten in Kürze eine Bestätigungs-E-Mail mit Ihren Zugangsdaten.
+                </p>
+                <button onclick="closePremiumModal()" class="w-full py-4 bg-black text-white rounded-full font-bold hover:bg-black/80 transition-colors">
+                    Zum Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -536,6 +699,51 @@ $recommendations = [
             renderChart();
             initReferral();
         });
+
+        // Premium Modal Logic
+        const openPremiumModal = () => {
+            const modal = document.getElementById('premium-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            showStep('registration');
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        };
+
+        const closePremiumModal = () => {
+            const modal = document.getElementById('premium-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        };
+
+        const showStep = (step) => {
+            ['registration', 'payment', 'success'].forEach(s => {
+                document.getElementById(`step-${s}`).classList.add('hidden');
+            });
+            document.getElementById(`step-${step}`).classList.remove('hidden');
+            lucide.createIcons();
+        };
+
+        const handleRegistration = (e) => {
+            e.preventDefault();
+            // In a real app, you would send this to the server
+            showStep('payment');
+        };
+
+        const handlePayment = (method) => {
+            console.log(`Processing payment via ${method}`);
+            // Simulate payment processing
+            const stepPayment = document.getElementById('step-payment');
+            stepPayment.style.opacity = '0.5';
+            stepPayment.style.pointerEvents = 'none';
+            
+            setTimeout(() => {
+                stepPayment.style.opacity = '1';
+                stepPayment.style.pointerEvents = 'auto';
+                showStep('success');
+            }, 1500);
+        };
     </script>
 </body>
 </html>
