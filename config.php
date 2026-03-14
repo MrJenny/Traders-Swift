@@ -18,27 +18,16 @@ define('SMTP_FROM_NAME', getenv('SMTP_FROM_NAME') ?: 'Traders-Swift-Mail');
  */
 function getDbConnection() {
     try {
-        $host = DB_HOST;
-        $db   = DB_NAME;
-        $user = DB_USER;
-        $pass = DB_PASS;
-        
-        if (empty($host) || empty($db) || empty($user)) {
-            error_log("Database configuration is incomplete in config.php");
-            return null;
-        }
-
-        $dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
+        $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
-        return new PDO($dsn, $user, $pass, $options);
+        return new PDO($dsn, DB_USER, DB_PASS, $options);
     } catch (PDOException $e) {
         error_log("Database connection failed: " . $e->getMessage());
-        // Return the error message in a way that can be caught
-        throw new Exception("Datenbank-Verbindungsfehler: " . $e->getMessage());
+        return null;
     }
 }
 
@@ -53,12 +42,15 @@ function sendConfirmationEmail($to, $firstname) {
                "Ihr Zugang wird nach erfolgreicher Zahlung freigeschaltet.\n\n" .
                "Beste Grüße,\nIhr Traders-Swift Team";
     
-    $headers = "From: " . SMTP_FROM_NAME . " <" . SMTP_FROM . ">\r\n" .
+    $headers = "MIME-Version: 1.0\r\n" .
+               "Content-Type: text/plain; charset=UTF-8\r\n" .
+               "From: " . "=?UTF-8?B?".base64_encode(SMTP_FROM_NAME)."?=" . " <" . SMTP_FROM . ">\r\n" .
                "Reply-To: " . SMTP_FROM . "\r\n" .
                "X-Mailer: PHP/" . phpversion();
 
-    // In a real environment with SMTP configured in php.ini, this works.
-    // Otherwise, use a library like PHPMailer.
-    return mail($to, $subject, $message, $headers);
+    // Encode subject for UTF-8
+    $encoded_subject = "=?UTF-8?B?".base64_encode($subject)."?=";
+
+    return mail($to, $encoded_subject, $message, $headers);
 }
 ?>

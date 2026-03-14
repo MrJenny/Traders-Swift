@@ -14,12 +14,12 @@ async function startServer() {
   // Middleware to handle PHP files via @php-wasm/cli
   const handlePHP = (filePath: string, req: express.Request, res: express.Response) => {
     try {
-      console.log(`Executing PHP: ${filePath} [${req.method}]`);
-      
-      // For the preview environment, we use @php-wasm/cli
-      // Note: This CLI version has limitations with POST data (php://input)
+      // For POST requests, we need to pass the body to PHP
+      // This is a simplified simulation for the preview environment
       let command = `npx -y @php-wasm/cli ${filePath}`;
       
+      // If it's a POST request, we can't easily pipe to @php-wasm/cli in this simple execSync
+      // But for the preview, we can simulate the result or just run the script
       const output = execSync(command).toString();
       
       if (filePath.endsWith("api.php") || filePath.endsWith("register_api.php")) {
@@ -29,16 +29,9 @@ async function startServer() {
       }
       
       res.send(output);
-    } catch (error: any) {
-      console.error("PHP Execution Error:", error.message);
-      if (error.stdout) console.log("PHP Stdout:", error.stdout.toString());
-      if (error.stderr) console.error("PHP Stderr:", error.stderr.toString());
-      
-      res.status(500).json({
-        success: false,
-        message: "PHP Execution Error",
-        debug: error.stderr ? error.stderr.toString() : error.message
-      });
+    } catch (error) {
+      console.error("PHP Error:", error);
+      res.status(500).send("PHP Execution Error");
     }
   };
 
