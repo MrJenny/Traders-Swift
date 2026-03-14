@@ -738,7 +738,7 @@ if (file_exists($json_file)) {
 
             try {
                 console.log('Sending registration data:', data);
-                const response = await fetch('/api/register', {
+                const response = await fetch('register_api.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
