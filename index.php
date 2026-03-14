@@ -737,25 +737,36 @@ if (file_exists($json_file)) {
             lucide.createIcons();
 
             try {
+                console.log('Sending registration data:', data);
                 const response = await fetch('/api/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
                 
-                // For the preview environment, we might get a 500 if DB is not setup
-                // but we want to show the next step for the user to see the UI
-                const result = await response.json().catch(() => ({ success: true }));
+                const responseText = await response.text();
+                console.log('Raw server response:', responseText);
+                
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (e) {
+                    console.error('Failed to parse JSON response:', e);
+                    throw new Error('Server hat keine gültige JSON-Antwort gesendet. Prüfen Sie die Browser-Konsole.');
+                }
                 
                 if (result.success) {
+                    console.log('Registration successful:', result);
                     showStep('payment');
                 } else {
-                    alert(result.message || 'Ein Fehler ist aufgetreten');
+                    console.warn('Registration failed:', result);
+                    let errorMsg = result.message || 'Ein Fehler ist aufgetreten';
+                    if (result.debug_error) errorMsg += '\n\nDebug: ' + result.debug_error;
+                    alert(errorMsg);
                 }
             } catch (error) {
                 console.error('Registration error:', error);
-                // Fallback for preview
-                showStep('payment');
+                alert('Verbindungsfehler: ' + error.message);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;

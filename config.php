@@ -18,16 +18,27 @@ define('SMTP_FROM_NAME', getenv('SMTP_FROM_NAME') ?: 'Traders-Swift');
  */
 function getDbConnection() {
     try {
-        $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+        $host = DB_HOST;
+        $db   = DB_NAME;
+        $user = DB_USER;
+        $pass = DB_PASS;
+        
+        if (empty($host) || empty($db) || empty($user)) {
+            error_log("Database configuration is incomplete in config.php");
+            return null;
+        }
+
+        $dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
-        return new PDO($dsn, DB_USER, DB_PASS, $options);
+        return new PDO($dsn, $user, $pass, $options);
     } catch (PDOException $e) {
         error_log("Database connection failed: " . $e->getMessage());
-        return null;
+        // Return the error message in a way that can be caught
+        throw new Exception("Datenbank-Verbindungsfehler: " . $e->getMessage());
     }
 }
 
