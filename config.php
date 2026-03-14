@@ -1,17 +1,17 @@
 <?php
 // config.php - Database and SMTP settings
 
-define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-define('DB_NAME', getenv('DB_NAME') ?: 'traders_swift');
-define('DB_USER', getenv('DB_USER') ?: 'root');
-define('DB_PASS', getenv('DB_PASS') ?: '');
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost:3306');
+define('DB_NAME', getenv('DB_NAME') ?: 'pizza_oven_db');
+define('DB_USER', getenv('DB_USER') ?: 'Webapp');
+define('DB_PASS', getenv('DB_PASS') ?: 'Sommer_6677');
 
-define('SMTP_HOST', getenv('SMTP_HOST') ?: '');
+define('SMTP_HOST', getenv('SMTP_HOST') ?: 'smtp.zublii.com');
 define('SMTP_PORT', getenv('SMTP_PORT') ?: '587');
-define('SMTP_USER', getenv('SMTP_USER') ?: '');
-define('SMTP_PASS', getenv('SMTP_PASS') ?: '');
-define('SMTP_FROM', getenv('SMTP_FROM') ?: 'noreply@traders-swift.ch');
-define('SMTP_FROM_NAME', getenv('SMTP_FROM_NAME') ?: 'Traders-Swift');
+define('SMTP_USER', getenv('SMTP_USER') ?: 'mail@zublii.com');
+define('SMTP_PASS', getenv('SMTP_PASS') ?: 'gopro8820_');
+define('SMTP_FROM', getenv('SMTP_FROM') ?: 'mail@zublii.com');
+define('SMTP_FROM_NAME', getenv('SMTP_FROM_NAME') ?: 'Traders-Swift-Mail');
 
 /**
  * Connect to the database

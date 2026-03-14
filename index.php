@@ -9,7 +9,7 @@ $promo_code = 'KBG6KJ';
 $referral_email = 'm_jenny@bluewin.ch';
 
 // Load recommendations from JSON file
-$json_file = '373-AR-KW09_6W_Equity.json';
+$json_file = './renders/373-AR-KW09_6W_Equity.json';
 $recommendations = [];
 
 if (file_exists($json_file)) {
