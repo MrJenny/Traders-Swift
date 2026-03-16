@@ -48,6 +48,14 @@ async function startServer() {
     handlePHP(path.join(__dirname, "register_api.php"), req, res);
   });
 
+  app.post("/login_api.php", express.json(), (req, res) => {
+    handlePHP(path.join(__dirname, "login_api.php"), req, res);
+  });
+
+  app.get("/logout.php", (req, res) => {
+    handlePHP(path.join(__dirname, "logout.php"), req, res);
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({

@@ -52,6 +52,12 @@ try {
     // Send email
     sendConfirmationEmail($email, $firstname);
 
+    // Start session
+    session_start();
+    $_SESSION['user_id'] = $db->lastInsertId();
+    $_SESSION['firstname'] = $firstname;
+    $_SESSION['is_premium'] = false;
+
     echo json_encode(['success' => true, 'message' => 'Registrierung erfolgreich']);
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => 'Ein Fehler ist aufgetreten: ' . $e->getMessage()]);

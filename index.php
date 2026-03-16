@@ -3,6 +3,9 @@
  * Traders-Swift | MTJ-Faktor Investment
  * PHP Version for traditional webspaces
  */
+session_start();
+$is_logged_in = isset($_SESSION['user_id']);
+$user_firstname = $_SESSION['firstname'] ?? '';
 
 // Configuration & Mock Data
 $promo_code = 'KBG6KJ';
@@ -129,13 +132,24 @@ if (file_exists($json_file)) {
                 <a href="#how-it-works" class="hover:opacity-100 transition-opacity">Wie es funktioniert</a>
                 <a href="#algorithm" class="hover:opacity-100 transition-opacity">Algorithmus</a>
                 <a href="#recommendations" class="hover:opacity-100 transition-opacity">Empfehlungen</a>
+                <?php if ($is_logged_in): ?>
+                <a href="#recommendations-2" class="hover:opacity-100 transition-opacity text-emerald-600 font-bold">Empfehlungen 2</a>
+                <?php endif; ?>
                 <a href="#referral" class="hover:opacity-100 transition-opacity">Empfehlung</a>
             </nav>
             <div class="flex items-center gap-4">
                 <span class="hidden sm:inline-block text-xs font-mono bg-emerald-100 text-emerald-700 px-2 py-1 rounded">PILOT PHASE</span>
-                <button onclick="openPremiumModal()" class="bg-black text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-black/80 transition-colors">
-                    Premium Zugang
-                </button>
+                <?php if ($is_logged_in): ?>
+                    <span class="text-sm font-medium">Hallo, <?php echo htmlspecialchars($user_firstname); ?></span>
+                    <a href="logout.php" class="text-xs text-black/40 hover:text-black transition-colors">Abmelden</a>
+                <?php else: ?>
+                    <button onclick="openLoginModal()" class="text-sm font-medium hover:opacity-70 transition-opacity">
+                        Anmelden
+                    </button>
+                    <button onclick="openPremiumModal()" class="bg-black text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-black/80 transition-colors">
+                        Premium Zugang
+                    </button>
+                <?php endif; ?>
             </div>
         </div>
     </header>
@@ -381,6 +395,62 @@ if (file_exists($json_file)) {
             </div>
         </section>
 
+        <?php if ($is_logged_in): ?>
+        <section id="recommendations-2" class="py-20 bg-emerald-50/30">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+                    <div class="max-w-2xl">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold mb-4">
+                            <i data-lucide="star" class="w-3 h-3"></i>
+                            <span>EXKLUSIV FÜR MITGLIEDER</span>
+                        </div>
+                        <h2 class="text-4xl font-bold mb-4">Empfehlungen 2</h2>
+                        <p class="text-black/60">
+                            Erweiterte Analyse mit Fokus auf Small-Cap Titel mit hohem Wachstumspotenzial.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <div class="min-w-[800px]">
+                        <div class="grid grid-cols-6 gap-4 px-8 py-4 bg-emerald-900 text-white rounded-t-2xl text-[10px] font-bold uppercase tracking-widest">
+                            <span>Symbol / Name</span>
+                            <span class="text-right">Volumen</span>
+                            <span class="text-right">StdDev</span>
+                            <span class="text-right">Ramp</span>
+                            <span class="text-right text-emerald-400">Growth Score</span>
+                            <span class="text-right">TRA</span>
+                        </div>
+                        <div class="border-x border-b border-emerald-900/10 rounded-b-2xl overflow-hidden bg-white">
+                            <div class="data-grid-row px-8">
+                                <div class="flex flex-col">
+                                    <span class="font-bold font-mono">NVDA</span>
+                                    <span class="text-[10px] text-black/40 truncate">NVIDIA Corporation</span>
+                                </div>
+                                <span class="text-right font-mono text-sm">52,340,120</span>
+                                <span class="text-right font-mono text-sm">2.4</span>
+                                <span class="text-right font-mono text-sm">15.2</span>
+                                <span class="text-right font-mono text-sm font-bold text-emerald-600">98</span>
+                                <span class="text-right font-mono text-sm">4.21</span>
+                            </div>
+                            <div class="data-grid-row px-8">
+                                <div class="flex flex-col">
+                                    <span class="font-bold font-mono">TSLA</span>
+                                    <span class="text-[10px] text-black/40 truncate">Tesla, Inc.</span>
+                                </div>
+                                <span class="text-right font-mono text-sm">84,120,500</span>
+                                <span class="text-right font-mono text-sm">4.8</span>
+                                <span class="text-right font-mono text-sm">8.4</span>
+                                <span class="text-right font-mono text-sm font-bold text-emerald-600">85</span>
+                                <span class="text-right font-mono text-sm">2.95</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <?php endif; ?>
+
         <section id="referral" class="py-20 bg-brand-bg">
             <div class="max-w-7xl mx-auto px-4">
                 <div class="glass-card p-8 md:p-12 flex flex-col md:flex-row items-center gap-12">
@@ -560,9 +630,47 @@ if (file_exists($json_file)) {
                 <p class="text-black/60 mb-8 leading-relaxed">
                     Vielen Dank für Ihr Vertrauen. Sie erhalten in Kürze eine Bestätigungs-E-Mail mit Ihren Zugangsdaten.
                 </p>
-                <button onclick="closePremiumModal()" class="w-full py-4 bg-black text-white rounded-full font-bold hover:bg-black/80 transition-colors">
+                <button onclick="window.location.reload()" class="w-full py-4 bg-black text-white rounded-full font-bold hover:bg-black/80 transition-colors">
                     Zum Dashboard
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeLoginModal()"></div>
+        <div class="glass-card w-full max-w-md bg-white relative z-10 overflow-hidden animate-in fade-in zoom-in duration-300">
+            <button onclick="closeLoginModal()" class="absolute top-6 right-6 text-black/40 hover:text-black transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+
+            <div class="p-8 md:p-12">
+                <div class="mb-8 text-center">
+                    <h2 class="text-3xl font-bold mb-2">Anmelden</h2>
+                    <p class="text-black/60">Willkommen zurück bei Traders-Swift.</p>
+                </div>
+                
+                <form onsubmit="handleLogin(event)" class="space-y-4">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase tracking-widest opacity-40">E-Mail Adresse</label>
+                        <input type="email" required name="email" class="w-full px-4 py-3 rounded-xl border border-black/10 focus:border-emerald-500 outline-none transition-colors" placeholder="max@beispiel.ch">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase tracking-widest opacity-40">Passwort</label>
+                        <input type="password" required name="password" class="w-full px-4 py-3 rounded-xl border border-black/10 focus:border-emerald-500 outline-none transition-colors" placeholder="••••••••">
+                    </div>
+                    
+                    <div class="pt-4">
+                        <button type="submit" class="w-full py-4 bg-black text-white rounded-full font-bold hover:bg-black/80 transition-colors flex items-center justify-center gap-2">
+                            Einloggen <i data-lucide="log-in" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    
+                    <p class="text-center text-sm text-black/40 mt-6">
+                        Noch kein Konto? <a href="javascript:void(0)" onclick="closeLoginModal(); openPremiumModal();" class="text-black font-bold hover:underline">Jetzt registrieren</a>
+                    </p>
+                </form>
             </div>
         </div>
     </div>
@@ -715,6 +823,57 @@ if (file_exists($json_file)) {
             modal.classList.add('hidden');
             modal.classList.remove('flex');
             document.body.style.overflow = '';
+        };
+
+        // Login Modal Logic
+        const openLoginModal = () => {
+            const modal = document.getElementById('login-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        };
+
+        const closeLoginModal = () => {
+            const modal = document.getElementById('login-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        };
+
+        const handleLogin = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Anmeldung...';
+            lucide.createIcons();
+
+            try {
+                const response = await fetch('login_api.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    window.location.reload();
+                } else {
+                    alert(result.message || 'Ungültige Anmeldedaten');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Ein Fehler ist aufgetreten bei der Anmeldung.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+                lucide.createIcons();
+            }
         };
 
         const showStep = (step) => {
