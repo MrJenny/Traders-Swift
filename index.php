@@ -530,14 +530,14 @@ if (file_exists($json_file)) {
     <!-- Premium Modal -->
     <div id="premium-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closePremiumModal()"></div>
-        <div class="glass-card w-full max-w-lg bg-white relative z-10 overflow-hidden animate-in fade-in zoom-in duration-300">
+        <div class="glass-card w-full max-w-md bg-white relative z-10 overflow-hidden animate-in fade-in zoom-in duration-300">
             <button onclick="closePremiumModal()" class="absolute top-6 right-6 text-black/40 hover:text-black transition-colors">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
 
             <!-- Step 1: Registration -->
             <div id="step-registration" class="p-8 md:p-12">
-                <div class="mb-8">
+                <div class="mb-8 text-center">
                     <h2 class="text-3xl font-bold mb-2">Premium Zugang</h2>
                     <p class="text-black/60">Registrieren Sie sich für wöchentliche Analysen.</p>
                 </div>
@@ -572,7 +572,7 @@ if (file_exists($json_file)) {
 
             <!-- Step 2: Payment -->
             <div id="step-payment" class="p-8 md:p-12 hidden">
-                <div class="mb-8">
+                <div class="mb-8 text-center">
                     <h2 class="text-3xl font-bold mb-2">Zahlung</h2>
                     <p class="text-black/60">Wählen Sie Ihre bevorzugte Zahlungsmethode.</p>
                 </div>
