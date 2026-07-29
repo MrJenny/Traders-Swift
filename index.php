@@ -328,7 +328,7 @@ if (file_exists($json_file)) {
 
                 <div class="overflow-x-auto">
                     <div class="min-w-[800px]">
-                        <div class="grid grid-cols-6 gap-4 px-8 py-4 bg-black text-white rounded-t-2xl text-[10px] font-bold uppercase tracking-widest">
+                        <div class="grid grid-cols-6 gap-4 px-8 py-4 bg-black text-white rounded-t-2xl text-[10px] font-bold uppercase tracking-widest items-center border-x border-t border-black">
                             <span>Symbol / Name</span>
                             <span class="text-right">Volumen</span>
                             <span class="text-right">StdDev</span>
@@ -413,7 +413,7 @@ if (file_exists($json_file)) {
 
                 <div class="overflow-x-auto">
                     <div class="min-w-[800px]">
-                        <div class="grid grid-cols-6 gap-4 px-8 py-4 bg-emerald-900 text-white rounded-t-2xl text-[10px] font-bold uppercase tracking-widest">
+                        <div class="grid grid-cols-6 gap-4 px-8 py-4 bg-emerald-900 text-white rounded-t-2xl text-[10px] font-bold uppercase tracking-widest items-center border-x border-t border-emerald-900">
                             <span>Symbol / Name</span>
                             <span class="text-right">Volumen</span>
                             <span class="text-right">StdDev</span>
