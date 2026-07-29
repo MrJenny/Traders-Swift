@@ -105,7 +105,7 @@ if (file_exists($json_file)) {
             }
         }
     </script>
-    <style>
+    <style type="text/tailwindcss">
         @layer components {
             .glass-card {
                 @apply bg-white/40 backdrop-blur-xl border border-white/20 rounded-3xl shadow-sm;
@@ -336,9 +336,9 @@ if (file_exists($json_file)) {
                             <span class="text-right text-emerald-400">MTJ Factor</span>
                             <span class="text-right">TRA</span>
                         </div>
-                        <div id="recommendations-list" class="border-x border-b border-black/5 rounded-b-2xl overflow-hidden">
+                        <div id="recommendations-list" class="border-x border-b border-black/5 rounded-b-2xl overflow-hidden bg-white">
                             <?php foreach ($recommendations as $stock): ?>
-                                <div class="data-grid-row px-8">
+                                <div class="grid grid-cols-6 gap-4 px-8 py-4 border-b border-black/5 items-center hover:bg-black/[0.02] transition-colors">
                                     <div class="flex flex-col">
                                         <span class="font-bold font-mono"><?php echo $stock['symbol']; ?></span>
                                         <span class="text-[10px] text-black/40 truncate"><?php echo $stock['name']; ?></span>
@@ -422,7 +422,7 @@ if (file_exists($json_file)) {
                             <span class="text-right">TRA</span>
                         </div>
                         <div class="border-x border-b border-emerald-900/10 rounded-b-2xl overflow-hidden bg-white">
-                            <div class="data-grid-row px-8">
+                            <div class="grid grid-cols-6 gap-4 px-8 py-4 border-b border-black/5 items-center hover:bg-black/[0.02] transition-colors">
                                 <div class="flex flex-col">
                                     <span class="font-bold font-mono">NVDA</span>
                                     <span class="text-[10px] text-black/40 truncate">NVIDIA Corporation</span>
@@ -433,7 +433,7 @@ if (file_exists($json_file)) {
                                 <span class="text-right font-mono text-sm font-bold text-emerald-600">98</span>
                                 <span class="text-right font-mono text-sm">4.21</span>
                             </div>
-                            <div class="data-grid-row px-8">
+                            <div class="grid grid-cols-6 gap-4 px-8 py-4 border-b border-black/5 items-center hover:bg-black/[0.02] transition-colors">
                                 <div class="flex flex-col">
                                     <span class="font-bold font-mono">TSLA</span>
                                     <span class="text-[10px] text-black/40 truncate">Tesla, Inc.</span>
